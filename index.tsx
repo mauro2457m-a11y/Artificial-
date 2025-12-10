@@ -28,15 +28,18 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
         <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
           <div className="bg-gray-800 p-6 rounded-lg border border-red-500 max-w-lg w-full shadow-2xl">
             <h1 className="text-2xl font-bold text-red-400 mb-4">Ops! Ocorreu um erro.</h1>
-            <p className="mb-4 text-gray-300">O aplicativo encontrou um problema inesperado.</p>
-            <div className="bg-gray-900 p-4 rounded text-sm font-mono text-red-300 overflow-auto mb-6 border border-gray-700">
+            <p className="mb-4 text-gray-300">Tente recarregar a página.</p>
+            <div className="bg-gray-900 p-4 rounded text-sm font-mono text-red-300 overflow-auto mb-6 border border-gray-700 max-h-48">
               {this.state.error?.toString() || "Erro desconhecido"}
             </div>
             <button 
-              onClick={() => window.location.reload()} 
+              onClick={() => {
+                localStorage.clear(); // Limpa cache que pode estar causando erro
+                window.location.reload();
+              }} 
               className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors"
             >
-              Tentar Novamente
+              Recarregar Aplicativo
             </button>
           </div>
         </div>

@@ -1,30 +1,24 @@
-
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import type { Ebook, EbookContent } from './types';
 import Header from './components/Header';
 import ThemeInput from './components/ThemeInput';
 import EbookDisplay from './components/EbookDisplay';
 import LoadingSpinner from './components/LoadingSpinner';
+import { GoogleGenAI, Type } from "@google/genai";
 
 export default function App(): React.ReactElement {
   const [theme, setTheme] = useState<string>('');
-  const [apiKey, setApiKey] = useState<string>(() => localStorage.getItem('user_api_key') || '');
   
   const [ebook, setEbook] = useState<Ebook | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
-  // Salvar a chave do usuário no localStorage sempre que mudar
-  useEffect(() => {
-    localStorage.setItem('user_api_key', apiKey);
-  }, [apiKey]);
-
   const handleGenerateEbook = useCallback(async () => {
-    const activeApiKey = apiKey.trim();
+    const apiKey = process.env.API_KEY;
 
-    if (!activeApiKey) {
-      setError('Por favor, insira sua Chave de API (Gemini API Key) no campo indicado para continuar.');
+    if (!apiKey) {
+      setError('A chave da API não está configurada. Verifique as variáveis de ambiente.');
       return;
     }
 
@@ -38,10 +32,7 @@ export default function App(): React.ReactElement {
     setEbook(null);
 
     try {
-      // Importação dinâmica para evitar tela branca na inicialização se o módulo falhar
-      const { GoogleGenAI, Type } = await import("@google/genai");
-
-      const ai = new GoogleGenAI({ apiKey: activeApiKey });
+      const ai = new GoogleGenAI({ apiKey });
 
       // 1. Gerar conteúdo do E-book
       setLoadingMessage('Criando o conteúdo do e-book... Isso pode levar um momento.');
@@ -118,12 +109,12 @@ export default function App(): React.ReactElement {
     } catch (e) {
       console.error(e);
       const errorMessage = e instanceof Error ? e.message : 'Ocorreu um erro desconhecido.';
-      setError(`Falha ao gerar o e-book: ${errorMessage}. Verifique sua chave de API.`);
+      setError(`Falha ao gerar o e-book: ${errorMessage}.`);
     } finally {
       setIsLoading(false);
       setLoadingMessage('');
     }
-  }, [theme, apiKey]);
+  }, [theme]);
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 font-sans flex flex-col">
@@ -133,8 +124,6 @@ export default function App(): React.ReactElement {
           <ThemeInput
             theme={theme}
             setTheme={setTheme}
-            apiKey={apiKey}
-            setApiKey={setApiKey}
             onSubmit={handleGenerateEbook}
             isLoading={isLoading}
           />
@@ -153,7 +142,7 @@ export default function App(): React.ReactElement {
           {!isLoading && !ebook && (
              <div className="text-center text-gray-500 pt-16 animate-fade-in">
                 <h2 className="text-2xl font-semibold mb-2">Pronto para criar seu best-seller?</h2>
-                <p>Insira sua API Key e um tema acima para começar.</p>
+                <p>Insira um tema acima para começar.</p>
              </div>
           )}
         </div>
