@@ -1,10 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gerador de E-book com IA</title>
+    <script>
+      // Polyfill crucial para evitar que o app trave com "process is not defined"
+      if (typeof process === "undefined") {
+        window.process = { env: {} };
+      }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       /* Custom scrollbar for better aesthetics */
