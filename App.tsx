@@ -1,7 +1,6 @@
 
 import React, { useState, useCallback } from 'react';
 import type { Ebook } from './types';
-import { generateEbookContent, generateEbookCover } from './services/geminiService';
 import Header from './components/Header';
 import ThemeInput from './components/ThemeInput';
 import EbookDisplay from './components/EbookDisplay';
@@ -25,6 +24,10 @@ export default function App(): React.ReactElement {
     setEbook(null);
 
     try {
+      // Use dynamic import to load the service only when needed.
+      // This prevents any top-level errors in the service from crashing the app on load.
+      const { generateEbookContent, generateEbookCover } = await import('./services/geminiService');
+      
       setLoadingMessage('Criando o conteúdo do e-book... Isso pode levar um momento.');
       const content = await generateEbookContent(theme);
       
@@ -35,7 +38,7 @@ export default function App(): React.ReactElement {
     } catch (e) {
       console.error(e);
       const errorMessage = e instanceof Error ? e.message : 'Ocorreu um erro desconhecido.';
-      setError(`Falha ao gerar o e-book. Detalhes: ${errorMessage}`);
+      setError(`Falha ao gerar o e-book. Pode haver um problema com a configuração da API. Detalhes: ${errorMessage}`);
     } finally {
       setIsLoading(false);
       setLoadingMessage('');
