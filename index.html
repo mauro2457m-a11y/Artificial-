@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -5,10 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gerador de E-book com IA</title>
     <script>
-      // Polyfill crucial para evitar que o app trave com "process is not defined"
-      if (typeof process === "undefined") {
-        window.process = { env: {} };
-      }
+      // Polyfill para garantir compatibilidade
+      window.process = window.process || { env: {} };
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -25,6 +24,13 @@
       }
       ::-webkit-scrollbar-thumb:hover {
         background: #6b7280; /* bg-gray-500 */
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 0.5s ease-out forwards;
       }
     </style>
   <script type="importmap">
