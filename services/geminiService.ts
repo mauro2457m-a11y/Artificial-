@@ -35,9 +35,6 @@ const ebookContentSchema = {
 };
 
 export async function generateEbookContent(theme: string): Promise<EbookContent> {
-  if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set");
-  }
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   const prompt = `Aja como um especialista em marketing digital e criação de infoprodutos. Crie um e-book completo e pronto para venda sobre o tema "${theme}". O e-book deve ter exatamente 10 capítulos. O conteúdo deve ser prático, acionável e de alto valor. Gere a resposta estritamente no formato JSON solicitado.`;
@@ -71,9 +68,6 @@ export async function generateEbookContent(theme: string): Promise<EbookContent>
 }
 
 export async function generateEbookCover(title: string, theme: string): Promise<string> {
-    if (!process.env.API_KEY) {
-        throw new Error("API_KEY environment variable not set");
-    }
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
     const prompt = `Crie uma capa de e-book profissional e atraente. O título do e-book é "${title}". O tema é "${theme}". A capa deve ser minimalista, moderna e visualmente impactante. Use uma paleta de cores que transmita confiança e profissionalismo. Inclua elementos gráficos abstratos relacionados ao tema. O título deve ser o foco principal, com uma tipografia elegante e legível. Não inclua nenhum outro texto além do título.`;
