@@ -1,40 +1,42 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { EbookContent } from '../types';
 
-const ebookContentSchema = {
-  type: Type.OBJECT,
-  properties: {
-    titulo_chamativo: {
-      type: Type.STRING,
-      description: "Um título de e-book extremamente atraente e voltado para vendas."
-    },
-    descricao_venda: {
-      type: Type.STRING,
-      description: "Uma descrição de venda persuasiva para a página do produto, destacando os benefícios e a transformação para o leitor."
-    },
-    capitulos: {
-      type: Type.ARRAY,
-      description: "Uma lista de exatamente 10 capítulos para o e-book.",
-      items: {
-        type: Type.OBJECT,
-        properties: {
-          titulo: {
-            type: Type.STRING,
-            description: "O título do capítulo."
+export async function generateEbookContent(theme: string): Promise<EbookContent> {
+  const { GoogleGenAI, Type } = await import('@google/genai');
+
+  const ebookContentSchema = {
+    type: Type.OBJECT,
+    properties: {
+      titulo_chamativo: {
+        type: Type.STRING,
+        description: "Um título de e-book extremamente atraente e voltado para vendas."
+      },
+      descricao_venda: {
+        type: Type.STRING,
+        description: "Uma descrição de venda persuasiva para a página do produto, destacando os benefícios e a transformação para o leitor."
+      },
+      capitulos: {
+        type: Type.ARRAY,
+        description: "Uma lista de exatamente 10 capítulos para o e-book.",
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            titulo: {
+              type: Type.STRING,
+              description: "O título do capítulo."
+            },
+            conteudo: {
+              type: Type.STRING,
+              description: "O conteúdo completo e detalhado para este capítulo."
+            },
           },
-          conteudo: {
-            type: Type.STRING,
-            description: "O conteúdo completo e detalhado para este capítulo."
-          },
+          required: ["titulo", "conteudo"],
         },
-        required: ["titulo", "conteudo"],
       },
     },
-  },
-  required: ["titulo_chamativo", "descricao_venda", "capitulos"],
-};
+    required: ["titulo_chamativo", "descricao_venda", "capitulos"],
+  };
 
-export async function generateEbookContent(theme: string): Promise<EbookContent> {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   const prompt = `Aja como um especialista em marketing digital e criação de infoprodutos. Crie um e-book completo e pronto para venda sobre o tema "${theme}". O e-book deve ter exatamente 10 capítulos. O conteúdo deve ser prático, acionável e de alto valor. Gere a resposta estritamente no formato JSON solicitado.`;
@@ -68,6 +70,7 @@ export async function generateEbookContent(theme: string): Promise<EbookContent>
 }
 
 export async function generateEbookCover(title: string, theme: string): Promise<string> {
+    const { GoogleGenAI } = await import('@google/genai');
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
     const prompt = `Crie uma capa de e-book profissional e atraente. O título do e-book é "${title}". O tema é "${theme}". A capa deve ser minimalista, moderna e visualmente impactante. Use uma paleta de cores que transmita confiança e profissionalismo. Inclua elementos gráficos abstratos relacionados ao tema. O título deve ser o foco principal, com uma tipografia elegante e legível. Não inclua nenhum outro texto além do título.`;
