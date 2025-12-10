@@ -1,4 +1,3 @@
-import { GoogleGenAI, Type } from "@google/genai";
 import type { EbookContent } from '../types';
 
 export async function generateEbookContent(theme: string): Promise<EbookContent> {
@@ -88,7 +87,12 @@ export async function generateEbookCover(title: string, theme: string): Promise<
         },
       });
 
-      for (const part of response.candidates[0].content.parts) {
+      const candidate = response.candidates?.[0];
+      if (!candidate) {
+        throw new Error("Nenhuma resposta válida foi retornada pela API de imagem.");
+      }
+
+      for (const part of candidate.content.parts) {
         if (part.inlineData) {
           const base64EncodeString: string = part.inlineData.data;
           return `data:${part.inlineData.mimeType};base64,${base64EncodeString}`;
